@@ -1,0 +1,47 @@
+﻿@page "/golfscores"
+@using GolfTracker.Application.DTOs
+@inject GolfScoreService GolfScoreService
+
+<h3>Golf Scores</h3>
+
+@if (golfScores == null)
+{
+    <div class="alert alert-info">Loading...</div>
+}
+else if (!golfScores.Any())
+{
+    <div class="alert alert-warning">No golf scores available.</div>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Hole Number</th>
+                <th>Score</th>
+                <th>Golf Course</th>
+                <th>Date Played</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var score in golfScores)
+            {
+                <tr>
+                    <td>@score.HoleNumber</td>
+                    <td>@score.Score</td>
+                    <td>@score.GolfCourseName</td>
+                    <td>@score.DatePlayed.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<GolfScoreDto> golfScores;
+
+    protected override async Task OnInitializedAsync()
+    {
+        golfScores = await GolfScoreService.GetGolfScoresAsync();
+    }
+}

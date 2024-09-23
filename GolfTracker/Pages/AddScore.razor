@@ -1,0 +1,57 @@
+﻿@page "/addscore"
+@using GolfTracker.Application.DTOs
+@inject GolfScoreService GolfScoreService
+@inject GolfCourseService GolfCourseService
+
+<h3>Add Golf Score</h3>
+
+<EditForm Model="newScore" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Hole Number:</label>
+        <InputNumber class="form-control" @bind-Value="newScore.HoleNumber" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Score:</label>
+        <InputNumber class="form-control" @bind-Value="newScore.Score" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Golf Course:</label>
+        <select class="form-select" @bind="newScore.GolfCourseName">
+            <option value="">Select a course</option>
+            @foreach (var course in golfCourses)
+            {
+                <option value="@course.Name">@course.Name</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Date Played:</label>
+        <InputDate class="form-control" @bind-Value="newScore.DatePlayed" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    private GolfScoreDto newScore = new GolfScoreDto
+        {
+            DatePlayed = DateTime.Today // Set the current date as the starting date
+        };
+
+    private List<GolfCourseDto> golfCourses = new List<GolfCourseDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch the list of golf courses (this method should be implemented in your service)
+        golfCourses = await GolfCourseService.GetGolfCoursesAsync();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await GolfScoreService.AddGolfScoreAsync(newScore); // Call the service method to add the score
+        newScore = new GolfScoreDto { DatePlayed = DateTime.Today }; // Reset the form and set the date again
+    }
+}
