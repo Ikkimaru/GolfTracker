@@ -37,7 +37,7 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<GolfTrackerDbContext>();
-    await SeedData.Initialize(dbContext);
+    await SeedDataMain.Initialize(dbContext);
 }
 
 app.UseHttpsRedirection();

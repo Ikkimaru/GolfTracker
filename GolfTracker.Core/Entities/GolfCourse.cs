@@ -1,9 +1,14 @@
 ﻿namespace GolfTracker.Core.Entities
 {
-    public class GolfCourse
+    public class GolfCourse : BaseEntity
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Holes { get; set; }
+        public string Name { get; set; } // Name of the golf course
+        public int NumberOfHoles { get; set; } // Indicate 9/18 holes
+        public List<GolfCourseHole> Holes { get; set; } // List of holes for the course
+
+        public GolfCourse()
+        {
+            Holes = new List<GolfCourseHole>();
+        }
     }
 }

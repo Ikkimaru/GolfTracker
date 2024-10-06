@@ -18,7 +18,10 @@ namespace GolfTracker.Infrastructure.Repositories
 
         public async Task<IEnumerable<GolfScore>> GetAllScoresAsync()
         {
-            return await _dbContext.GolfScores.Include(gs => gs.GolfCourse).ToListAsync();
+            return await _dbContext.GolfScores
+                .Include(gs => gs.GolfCourse) // Include GolfCourse data
+                .Include(gs => gs.HoleScores)  // Include HoleScores data if necessary
+                .ToListAsync();
         }
 
         public async Task AddScoreAsync(GolfScore golfScore)

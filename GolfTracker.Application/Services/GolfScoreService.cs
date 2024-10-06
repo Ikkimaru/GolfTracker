@@ -21,23 +21,34 @@ namespace GolfTracker.Application.Services
             var scores = await _golfScoreRepository.GetAllScoresAsync();
             return scores.Select(s => new GolfScoreDto
             {
-                HoleNumber = s.HoleNumber,
-                Score = s.Score,
+                Id = s.Id,
+                GolfCourseId = s.GolfCourseId,
+                PlayerName = s.PlayerName,
                 GolfCourseName = s.GolfCourse.Name,
+                HoleScores = s.HoleScores.Select(h => new HoleScoreDto
+                {
+                    HoleNumber = h.HoleNumber,
+                    Score = h.Score
+                }).ToList(),
                 DatePlayed = s.DatePlayed
             });
         }
 
-        
         public async Task AddScoreAsync(GolfScoreDto golfScoreDto)
         {
             var score = new GolfScore
             {
-                HoleNumber = golfScoreDto.HoleNumber,
-                Score = golfScoreDto.Score,
+                GolfCourseId = golfScoreDto.GolfCourseId,
+                PlayerName = golfScoreDto.PlayerName,
+                HoleScores = golfScoreDto.HoleScores.Select(h => new HoleScores
+                {
+                    HoleNumber = h.HoleNumber,
+                    Score = h.Score
+                }).ToList(),
                 DatePlayed = golfScoreDto.DatePlayed
             };
             await _golfScoreRepository.AddScoreAsync(score);
         }
+
     }
 }

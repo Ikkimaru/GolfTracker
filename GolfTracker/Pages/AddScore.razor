@@ -1,57 +1,45 @@
 ﻿@page "/addscore"
+@inherits AddScoreBase
 @using GolfTracker.Application.DTOs
-@inject GolfScoreService GolfScoreService
-@inject GolfCourseService GolfCourseService
 
 <h3>Add Golf Score</h3>
 
-<EditForm Model="newScore" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <div class="mb-3">
-        <label class="form-label">Hole Number:</label>
-        <InputNumber class="form-control" @bind-Value="newScore.HoleNumber" />
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Score:</label>
-        <InputNumber class="form-control" @bind-Value="newScore.Score" />
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Golf Course:</label>
-        <select class="form-select" @bind="newScore.GolfCourseName">
-            <option value="">Select a course</option>
-            @foreach (var course in golfCourses)
-            {
-                <option value="@course.Name">@course.Name</option>
-            }
-        </select>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Date Played:</label>
-        <InputDate class="form-control" @bind-Value="newScore.DatePlayed" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Submit</button>
-</EditForm>
-
-@code {
-    private GolfScoreDto newScore = new GolfScoreDto
-        {
-            DatePlayed = DateTime.Today // Set the current date as the starting date
-        };
-
-    private List<GolfCourseDto> golfCourses = new List<GolfCourseDto>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Fetch the list of golf courses (this method should be implemented in your service)
-        golfCourses = await GolfCourseService.GetGolfCoursesAsync();
-    }
-
-    private async Task HandleValidSubmit()
-    {
-        await GolfScoreService.AddGolfScoreAsync(newScore); // Call the service method to add the score
-        newScore = new GolfScoreDto { DatePlayed = DateTime.Today }; // Reset the form and set the date again
-    }
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
 }
+
+<div>
+    <label for="golfCourseSelect">Select Golf Course:</label>
+    <select id="golfCourseSelect" @bind="@score.GolfCourseId">
+        <option value="">Select a course</option>
+        @foreach (var course in golfCourses ?? Enumerable.Empty<GolfCourseDto>())
+        {
+            <option value="@course.Id">@course.Name</option>
+        }
+    </select>
+</div>
+
+<div>
+    <label for="gameTypeSelect">Game Type:</label>
+    <select id="gameTypeSelect" @bind="@selectedGameType">
+        <option value="18">18 Holes</option>
+        <option value="9">9 Holes</option>
+    </select>
+</div>
+
+@if (score.HoleScores != null && score.HoleScores.Count > 0)
+{
+    <h4>Scores for @selectedGameType Holes:</h4>
+    <div>
+        @for (int i = 0; i < score.HoleScores.Count; i++)
+        {
+            <div>
+                <label for="holeScore@(i + 1)">Score for Hole @(i + 1):</label>
+                <input type="number" id="holeScore@(i + 1)" @bind="@score.HoleScores[i].Score" min="0" step="1" />
+            </div>
+        }
+    </div>
+}
+
+<button @onclick="HandleValidSubmit">Submit Score</button>

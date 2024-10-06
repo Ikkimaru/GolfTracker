@@ -26,22 +26,16 @@ else
         <tbody>
             @foreach (var score in golfScores)
             {
-                <tr>
-                    <td>@score.HoleNumber</td>
-                    <td>@score.Score</td>
-                    <td>@score.GolfCourseName</td>
-                    <td>@score.DatePlayed.ToShortDateString()</td>
-                </tr>
+                foreach (var holeScore in score.HoleScores)
+                {
+                    <tr>
+                        <td>@holeScore.HoleNumber</td>
+                        <td>@holeScore.Score</td>
+                        <td>@score.GolfCourseName</td>
+                        <td>@score.DatePlayed.ToShortDateString()</td>
+                    </tr>
+                }
             }
         </tbody>
     </table>
-}
-
-@code {
-    private List<GolfScoreDto> golfScores;
-
-    protected override async Task OnInitializedAsync()
-    {
-        golfScores = await GolfScoreService.GetGolfScoresAsync();
-    }
 }

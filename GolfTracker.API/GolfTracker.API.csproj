@@ -16,4 +16,8 @@
     <ProjectReference Include="..\GolfTracker.Data\GolfTracker.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Database\" />
+  </ItemGroup>
+
 </Project>
